@@ -46,3 +46,11 @@ body {
   border: none;
   color: var(--light);
 }
+
+button {
+  cursor: pointer;
+}
+button:active {
+  background-color: var(--light);
+  color: var(--dark);
+}
