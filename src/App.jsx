@@ -28,7 +28,7 @@ function App() {
   const digits = createDigits();
 
   function handleDigits(digit) {
-    if (input === "0") {
+    if (input === "0" || input === "Infinity") {
       setInput(digit.toString());
     } else {
       setInput((prevInput) => prevInput + digit.toString());
@@ -37,7 +37,7 @@ function App() {
 
   function handleOperators(operator) {
     setCanEnterDecimalValue(true);
-    if (input === "0") {
+    if (input === "0" || input === "Infinity") {
       return;
     }
     setInput((prevInput) => {
@@ -78,7 +78,7 @@ function App() {
   }
 
   function handleBackspace() {
-    if (input.length === 1) {
+    if (input.length === 1 || input === "Infinity") {
       setInput("0");
     } else {
       setInput((prevInput) => {
@@ -87,7 +87,6 @@ function App() {
       });
     }
   }
-  function handleInvalidInputs() {}
 
   return (
     <div className="app">
