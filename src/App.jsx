@@ -39,6 +39,9 @@ function App() {
 
   function handleOperators(operator) {
     setCanEnterDecimalValue(true);
+    if (input.value === "0") {
+      return;
+    }
     setInput((prevInput) => {
       if (isLastCharAnOperator()) {
         return {
@@ -90,6 +93,7 @@ function App() {
       });
     }
   }
+  function handleInvalidInputs() {}
 
   return (
     <div className="app">
