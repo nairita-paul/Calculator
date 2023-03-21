@@ -5,6 +5,7 @@ function App() {
   const [input, setInput] = React.useState({
     value: "0",
   });
+  const [canEnterDecimalValue, setCanEnterDecimalValue] = React.useState(true);
 
   const operators = ["+", "-", "*", "/"];
 
@@ -12,58 +13,82 @@ function App() {
     const digits = [];
     for (let i = 1; i < 10; i++) {
       digits.push(
-        <button key={i} onClick={() => digitClick(i)}>
+        <button key={i} onClick={() => handleDigits(i)}>
           {i}
         </button>
       );
     }
+
+    digits.push(
+      <button key={0} onClick={() => handleDigits(0)}>
+        0
+      </button>
+    );
     return digits;
   };
 
   const digits = createDigits();
 
-  function digitClick(i) {
-    if (i === "X" && input.value.length === 1) {
+  function handleDigits(digit) {
+    if (input.value === "0") {
+      setInput({ value: digit.toString() });
+    } else {
+      setInput((prevInput) => ({ value: prevInput.value + digit.toString() }));
+    }
+  }
+
+  function handleOperators(operator) {
+    setCanEnterDecimalValue(true);
+    setInput((prevInput) => {
+      if (isLastCharAnOperator()) {
+        return {
+          value: updateLastOperator(operator),
+        };
+      } else {
+        return { value: prevInput.value + operator };
+      }
+    });
+
+    function isLastCharAnOperator() {
+      const lastChar = input.value.charAt(input.value.length - 1);
+      return operators.includes(lastChar);
+    }
+
+    function updateLastOperator(operator) {
+      return input.value.slice(0, input.value.length - 1) + operator;
+    }
+  }
+
+  function handleDecimal() {
+    if (canEnterDecimalValue) {
+      setInput((prevInput) => {
+        return { value: prevInput.value + "." };
+      });
+    }
+    setCanEnterDecimalValue(false);
+  }
+
+  function equalEvaluation() {
+    const val = eval(input.value).toString();
+    setInput({ value: val });
+  }
+
+  function clear() {
+    setCanEnterDecimalValue(true);
+    setInput({ value: "0" });
+  }
+
+  function handleBackspace() {
+    if (input.value.length === 1) {
       setInput({ value: "0" });
-    } else if (i === "X") {
+    } else {
       setInput((prevInput) => {
         const numToString = prevInput.value.toString();
         return {
           value: numToString.slice(0, -1),
         };
       });
-    } else if (input.value === "0") {
-      if (operators.includes(i)) {
-        return setInput({ value: "0" });
-      } else {
-        setInput({ value: i.toString() });
-      }
-    } else if (operators.includes(i)) {
-      setInput((prevInput) => {
-        const lastChar = prevInput.value.charAt(prevInput.value.length - 1);
-        if (operators.includes(lastChar)) {
-          return {
-            value: prevInput.value.slice(0, prevInput.value.length - 1) + i,
-          };
-        } else {
-          return { value: prevInput.value + i };
-        }
-      });
-    } else if (i === ".") {
-      if (!input.value.includes(".")) {
-        setInput((prevInput) => {
-          return { value: prevInput.value + i };
-        });
-      }
-    } else {
-      setInput((prevInput) => {
-        return { value: prevInput.value + i };
-      });
     }
-  }
-
-  function clear() {
-    setInput({ value: "0" });
   }
 
   return (
@@ -75,33 +100,18 @@ function App() {
       </div>
 
       <div className="operators">
-        <button
-          onClick={() => {
-            digitClick("+");
-          }}
-        >
-          {" "}
-          +{" "}
-        </button>
-        <button onClick={() => digitClick("-")}> - </button>
-        <button onClick={() => digitClick("*")}> * </button>
-        <button onClick={() => digitClick("/")}> / </button>
-        <button onClick={() => digitClick("X")}> X </button>
+        <button onClick={() => handleOperators("+")}> + </button>
+        <button onClick={() => handleOperators("-")}> - </button>
+        <button onClick={() => handleOperators("*")}> * </button>
+        <button onClick={() => handleOperators("/")}> / </button>
+        <button onClick={handleBackspace}> {"\u232B"} </button>
         <button onClick={clear}> Clear </button>
       </div>
 
       <div className="numbers">
         {digits}
-        <button onClick={() => digitClick(0)}>0</button>
-        <button onClick={() => digitClick(".")}>.</button>
-        <button
-          onClick={() => {
-            const val = eval(input.value);
-            setInput({ value: val });
-          }}
-        >
-          =
-        </button>
+        <button onClick={handleDecimal}>.</button>
+        <button onClick={() => equalEvaluation("=")}> = </button>
       </div>
     </div>
   );
