@@ -2,9 +2,7 @@ import React from "react";
 import "./App.css";
 
 function App() {
-  const [input, setInput] = React.useState({
-    value: "0",
-  });
+  const [input, setInput] = React.useState("0");
   const [canEnterDecimalValue, setCanEnterDecimalValue] = React.useState(true);
 
   const operators = ["+", "-", "*", "/"];
@@ -30,66 +28,62 @@ function App() {
   const digits = createDigits();
 
   function handleDigits(digit) {
-    if (input.value === "0") {
-      setInput({ value: digit.toString() });
+    if (input === "0") {
+      setInput(digit.toString());
     } else {
-      setInput((prevInput) => ({ value: prevInput.value + digit.toString() }));
+      setInput((prevInput) => prevInput + digit.toString());
     }
   }
 
   function handleOperators(operator) {
     setCanEnterDecimalValue(true);
-    if (input.value === "0") {
+    if (input === "0") {
       return;
     }
     setInput((prevInput) => {
       if (isLastCharAnOperator()) {
-        return {
-          value: updateLastOperator(operator),
-        };
+        return updateLastOperator(operator);
       } else {
-        return { value: prevInput.value + operator };
+        return prevInput + operator;
       }
     });
 
     function isLastCharAnOperator() {
-      const lastChar = input.value.charAt(input.value.length - 1);
+      const lastChar = input.charAt(input.length - 1);
       return operators.includes(lastChar);
     }
 
     function updateLastOperator(operator) {
-      return input.value.slice(0, input.value.length - 1) + operator;
+      return input.slice(0, input.length - 1) + operator;
     }
   }
 
   function handleDecimal() {
     if (canEnterDecimalValue) {
       setInput((prevInput) => {
-        return { value: prevInput.value + "." };
+        return prevInput + ".";
       });
     }
     setCanEnterDecimalValue(false);
   }
 
   function equalEvaluation() {
-    const val = eval(input.value).toString();
-    setInput({ value: val });
+    const val = eval(input).toString();
+    setInput(val);
   }
 
   function clear() {
     setCanEnterDecimalValue(true);
-    setInput({ value: "0" });
+    setInput("0");
   }
 
   function handleBackspace() {
-    if (input.value.length === 1) {
-      setInput({ value: "0" });
+    if (input.length === 1) {
+      setInput("0");
     } else {
       setInput((prevInput) => {
-        const numToString = prevInput.value.toString();
-        return {
-          value: numToString.slice(0, -1),
-        };
+        const numToString = prevInput.toString();
+        return numToString.slice(0, -1);
       });
     }
   }
@@ -99,7 +93,7 @@ function App() {
     <div className="app">
       <div>
         <div className="display">
-          <p>{input.value}</p>
+          <p>{input}</p>
         </div>
       </div>
 
